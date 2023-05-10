@@ -24,8 +24,6 @@ React components for creating carousel based calendar appointments.
 
 ## Quickstart
 
----
-
 Install the library with peer dependencies:
 
 ```bash
@@ -71,8 +69,6 @@ function SomeComponent() {
 
 ## Docs
 
----
-
 You can use `appointment-calendar-carousal` as is by just wrapping the app with `AppointmentCalenderProvider` and placing the `CalendarAppointment` component where needed. Then You can get values from the provided `useAppointment` hook.
 
 Or you can even use it with your own custom components and even mix some of the provided components like `CalenderCard` as all the components are importable and reuseable for better customization.
@@ -94,16 +90,16 @@ This is a Wrapper for the appointment state management and pre-configurations.
 [^1]: An Array containing a list of dates.
 
 ```ts
-Array<{
+IDates = {
   dates: Dayjs
   isCurrent: boolean /** wether date is today */
-}>
+}
 ```
 
 [^2]: An object with date and time formats.
 
 ```ts
-{
+Formats = {
   date: string /** @default "DD, MMMM YYYY" */
   time: string /** @default "h:mm a" */
 }
@@ -112,7 +108,7 @@ Array<{
 [^3]: An object for providing some basic carousel styles.
 
 ```ts
-{
+StyleConfigs = {
   cardWidth?: number; /** @default 170 */
   gap?: number; /** @default 10 */
   cardsPerView?: number; /** @default 3 */
