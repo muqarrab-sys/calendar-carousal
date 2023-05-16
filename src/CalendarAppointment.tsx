@@ -85,7 +85,7 @@ const CalendarAppointment: React.FC<CalendarAppointmentProps> = (props) => {
   const PanelFontStyle = { fontSize: token.fontSizeHeading5, fontWeight: token.fontWeightStrong }
 
   return (
-    <div style={{ width: 582 }}>
+    <div style={{ minWidth: cardWidth * cardsPerView + gap * (cardsPerView + 1) + token.size * 2 }}>
       <Collapse
         onChange={(key) => setActivePanel(key)}
         activeKey={activePanel}

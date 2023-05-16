@@ -11,15 +11,15 @@ export interface StylesConfig {
   /**
    * @default 170
    */
-  cardWidth?: number
+  cardWidth: number
   /**
    * @default 10
    */
-  gap?: number
+  gap: number
   /**
    * @default "xs|sm: 1, else: 3"
    */
-  cardsPerView?: number
+  cardsPerView: number
 }
 
 export interface AppointmentCalenderContext<T = Dayjs> {
@@ -41,7 +41,7 @@ export interface AppointmentCalenderProviderProps<T = Dayjs> {
   children: ReactNode
   dates?: IDate<T>[]
   formats?: Formats
-  stylesConfigs?: StylesConfig
+  stylesConfigs?: Partial<StylesConfig>
   /**
    * @default 30
    */
