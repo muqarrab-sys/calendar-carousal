@@ -164,11 +164,11 @@ These helper functions can be used to generate a list of dates.
 
 ### `getDateList()`
 
-| Args       | Type     | Description                                           |
-| ---------- | -------- | ----------------------------------------------------- |
-| start      | number   | Start date of the list                                |
-| end        | Dayjs    | Last date of the list                                 |
-| closedDays | string[] | Sets `closed` to `true` for selected days of the week |
+| Args       | Type       | Description                                           |
+| ---------- | ---------- | ----------------------------------------------------- |
+| start      | number     | Start date of the list                                |
+| end        | Dayjs      | Last date of the list                                 |
+| closedDays | ClosedDays | Sets `closed` to `true` for selected days of the week |
 
 ### `getDatesByNumber()`
 
@@ -176,18 +176,18 @@ These helper functions can be used to generate a list of dates.
 | ---------- | -------------- | ----------------------------------------------------------------------------------- |
 | number     | number         | Number by which list items are added based on the type                              |
 | type       | ManipulateType | Type by which number of items to be added are decided. for example, "day" or "month |
-| closedDays | string[]       | Sets `closed` to `true` for selected days of the week                               |
+| closedDays | ClosedDays     | Sets `closed` to `true` for selected days of the week                               |
 
 ### `getDates()`
 
 :no_entry: [DEPRECATED]
 
-| Args       | Type     | Description                                                                                                        |
-| ---------- | -------- | ------------------------------------------------------------------------------------------------------------------ |
-| radius     | number   | if no `from` and `to` are provided you can provide `radius` to let generate dates list with in the radius of _Now_ |
-| from       | Dayjs    | Date from which the date list should start                                                                         |
-| to         | Dayjs    | Date at which the date list should end                                                                             |
-| closedDays | string[] | Sets `closed` to `true` for selected days of the week                                                              |
+| Args       | Type       | Description                                                                                                        |
+| ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------ |
+| radius     | number     | if no `from` and `to` are provided you can provide `radius` to let generate dates list with in the radius of _Now_ |
+| from       | Dayjs      | Date from which the date list should start                                                                         |
+| to         | Dayjs      | Date at which the date list should end                                                                             |
+| closedDays | ClosedDays | Sets `closed` to `true` for selected days of the week                                                              |
 
 ```ts
 type ClosedDays = Array<'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday'>
