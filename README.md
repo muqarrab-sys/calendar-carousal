@@ -81,34 +81,30 @@ Or you can even use it with your own custom components and even mix some of the 
 
 This is a Wrapper for the appointment state management and pre-configurations.
 
-| Prop          | Type          | Description                                                                                        | Default |
-| ------------- | ------------- | -------------------------------------------------------------------------------------------------- | ------- |
-| dates         | IDates[] [^1] | Provide custom dates list _(you can use provided `getDates` helper function to create dates list)_ | -       |
-| formats       | Object [^2]   | Provide the custom format for `Date` and `Time`                                                    | -       |
-| stylesConfigs | Object [^3]   | Provide some basic configs to the calender carousel                                                | -       |
-
-[^1]: An Array containing a list of dates.
+| Prop          | Type    | Description                                                                              | Default |
+| ------------- | ------- | ---------------------------------------------------------------------------------------- | ------- |
+| dates         | IDate[] | Provide custom dates list _(you can use provided helper functions to create dates list)_ | -       |
+| formats       | Object  | Provide the custom format for `Date` and `Time`                                          | -       |
+| stylesConfigs | Object  | Provide some basic configs to the calender carousel                                      | -       |
+| durationStep  | number  | Amount by which duration should increase or decrease                                     | 30      |
 
 ```ts
-IDates = {
-  dates: Dayjs
-  isCurrent: boolean /** wether date is today */
+interface IDate = {
+  dates: Dayjs;
+  isCurrent: boolean; /** wether date is today */
+  closed: boolean;
 }
 ```
 
-[^2]: An object with date and time formats.
-
 ```ts
-Formats = {
-  date: string /** @default "DD, MMMM YYYY" */
-  time: string /** @default "h:mm a" */
+interface Formats = {
+  date: string; /** @default "DD, MMMM YYYY" */
+  time: string; /** @default "h:mm a" */
 }
 ```
 
-[^3]: An object for providing some basic carousel styles.
-
 ```ts
-StyleConfigs = {
+interface StyleConfigs = {
   cardWidth?: number; /** @default 170 */
   gap?: number; /** @default 10 */
   cardsPerView?: number; /** @default 3 */
@@ -119,29 +115,15 @@ StyleConfigs = {
 
 This is the main component and can be used as is with `useAppointment`, or can be used as a controlled component.
 
-| Prop         | Type     | Description                                     | Default |
-| ------------ | -------- | ----------------------------------------------- | ------- |
-| data         | IDates[] | Provide custom dates list if not using Provider | -       |
-| formats      | Object   | Provide the custom format for `Date` and `Time` | -       |
-| cardWidth    | number   | Width of the `CalenderCard`                     | 170     |
-| cardsPerView | number   | Number of cards shown per view in carousel      | 3       |
-| gap          | number   | Space between each card within carousel         | 10      |
-
-### `AppCollapsible`
-
-A simple Wrapper for `AppPanel`.
-
-### `AppPanel`
-
-A Simple Panel.
-
-| Prop        | Type                | Description                          | Default |
-| ----------- | ------------------- | ------------------------------------ | ------- |
-| header      | string or ReactNode | Title for the panel                  | -       |
-| extra       | string or ReactNode | Element for right side of panel      | -       |
-| staticPanel | boolean             | Wether panel has dropdown or not     | false   |
-| open        | boolean             | Is panel open by default             | false   |
-| onChange    | (): void            | callback when panel is opened/closed | -       |
+| Prop         | Type                           | Description                                          | Default |
+| ------------ | ------------------------------ | ---------------------------------------------------- | ------- |
+| data         | IDate[]                        | Provide custom dates list if not using Provider      | -       |
+| formats      | Object                         | Provide the custom format for `Date` and `Time`      | -       |
+| gap          | number                         | Space between each card within carousel              | 10      |
+| cardsPerView | number                         | Number of cards shown per view in carousel           | 3       |
+| cardWidth    | number                         | Width of the `CalenderCard`                          | 170     |
+| durationStep | number                         | Amount by which duration should increase or decrease | 30      |
+| onChange     | ({dateTime, duration}) => void | callback each time any value is changed              | -       |
 
 ### Hooks
 
@@ -151,27 +133,65 @@ A Simple Panel.
 
 This contains all the configs and state of the appointment calender.
 
-| Values           | Type           | Description                                                            |
-| ---------------- | -------------- | ---------------------------------------------------------------------- |
-| dates            | IDates[]       | List of dates to be shown in carousel                                  |
-| formats          | Object         | Provided formats for date and time                                     |
-| stylesConfig     | Object         | Provided style configs                                                 |
-| selectedDates    | IDates         | Date selected via `CalendarAppointment` component                      |
-| setSelectedDates | (IDates): void | used to manually select a date _(useful if creating custom component)_ |
+| Values           | Type                                 | Description                                                        |
+| ---------------- | ------------------------------------ | ------------------------------------------------------------------ |
+| dates            | IDate[]                              | List of dates to be shown in carousel                              |
+| formats          | Object                               | Provided formats for date and time                                 |
+| stylesConfig     | Object                               | Provided style configs                                             |
+| values           | SelectedValues                       | Object containing currently selected values                        |
+| durationStep     | number                               | Amount by which duration should increase or decrease               |
+| setDate          | (Dayjs): void                        | Manually set the current selected date                             |
+| setDuration      | (number): void                       | Manually set the current selected duration                         |
+| setDatesList     | (IDate): void                        | Manually set the list of dates                                     |
+| setSelectedDates | (IDate): void                        | Manually set selected date _(useful if creating custom component)_ |
+| addTime          | (value: number, type: string): Dayjs | Adds time into current selected date object and returns it         |
+| subtractTime     | (value: number, type: string): Dayjs | Subtract time from current selected date object and returns it     |
+| increaseDuration | (number): number                     | Adds time into duration and returns updated duration               |
+| decreaseDuration | (number): number                     | Subtract time from duration and returns updated duration           |
+
+```ts
+interface SelectedValues {
+  datetime: Dayjs
+  duration: number
+}
+```
 
 ### Helper Functions
 
 ---
 
+These helper functions can be used to generate a list of dates.
+
+### `getDateList()`
+
+| Args       | Type     | Description                                           |
+| ---------- | -------- | ----------------------------------------------------- |
+| start      | number   | Start date of the list                                |
+| end        | Dayjs    | Last date of the list                                 |
+| closedDays | string[] | Sets `closed` to `true` for selected days of the week |
+
+### `getDatesByNumber()`
+
+| Args       | Type           | Description                                                                         |
+| ---------- | -------------- | ----------------------------------------------------------------------------------- |
+| number     | number         | Number by which list items are added based on the type                              |
+| type       | ManipulateType | Type by which number of items to be added are decided. for example, "day" or "month |
+| closedDays | string[]       | Sets `closed` to `true` for selected days of the week                               |
+
 ### `getDates()`
 
-This a helper function that generates a list of dates in the form of `IDates[]`.
+:no_entry: [DEPRECATED]
 
-| Args   | Type   | Description                                                                                                        |
-| ------ | ------ | ------------------------------------------------------------------------------------------------------------------ |
-| radius | number | if no `from` and `to` are provided you can provide `radius` to let generate dates list with in the radius of _Now_ |
-| from   | Dayjs  | Date from which the date list should start                                                                         |
-| to     | Dayjs  | Date at which the date list should end                                                                             |
+| Args       | Type     | Description                                                                                                        |
+| ---------- | -------- | ------------------------------------------------------------------------------------------------------------------ |
+| radius     | number   | if no `from` and `to` are provided you can provide `radius` to let generate dates list with in the radius of _Now_ |
+| from       | Dayjs    | Date from which the date list should start                                                                         |
+| to         | Dayjs    | Date at which the date list should end                                                                             |
+| closedDays | string[] | Sets `closed` to `true` for selected days of the week                                                              |
+
+```ts
+type ClosedDays = Array<'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday'>
+```
 
 ## License
 

@@ -1,6 +1,6 @@
 {
   "name": "appointment-calendar-carousal",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
   "types": "./dist/esm/index.d.ts",
@@ -21,12 +21,14 @@
     "build:esm": "tsc",
     "build:cjs": "tsc --module commonjs --outDir dist/cjs",
     "lint": "eslint \"{**/*,*}.{js,ts,jsx,tsx}\"",
+    "lint:fix": "eslint \"{**/*,*}.{js,ts,jsx,tsx}\" --fix",
     "prettier": "prettier --write \"{src,tests,example/src}/**/*.{js,ts,jsx,tsx}\"",
     "test": "jest --config jestconfig.json",
     "prepare": "npm run build",
     "prepublishOnly": "npm test && npm run prettier && npm run lint"
   },
   "devDependencies": {
+    "@ant-design/icons": "^5.0.1",
     "@testing-library/react": "^14.0.0",
     "@types/jest": "^29.5.1",
     "@types/react": "^18.2.6",
@@ -49,9 +51,10 @@
     "typescript": "^5.0.4"
   },
   "peerDependencies": {
-    "react": ">=18",
+    "@ant-design/icons": ">=5.0.1",
     "antd": ">=5.0.0",
-    "dayjs": "^1.11.0"
+    "dayjs": "^1.11.0",
+    "react": ">=18"
   },
   "files": [
     "dist",

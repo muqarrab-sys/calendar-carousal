@@ -1,9 +1,8 @@
-import { Button, Col, Row } from 'antd'
 import { Dayjs } from 'dayjs'
-import React, { FC, Fragment, useCallback, useRef, useState } from 'react'
-import { IDates } from '../../helpers/getDates'
+import React, { FC, useCallback, useRef, useState } from 'react'
+import { CARDS_GAP, CARDS_PER_VIEW, CARD_WIDTH } from '../../constants'
+import { IDate } from '../../types'
 import Card from '../CalenderCard'
-import { CARD_WIDTH, CARDS_GAP, CARDS_PER_VIEW } from '../../constants'
 
 export interface CalendarCarouselProps {
   /**
@@ -19,7 +18,7 @@ export interface CalendarCarouselProps {
    */
   cardsPerView?: number
 
-  data: IDates[]
+  data: IDate[]
   containerWidth?: number
   onSelectDate?(date: Dayjs): void
 }
@@ -44,20 +43,6 @@ const CalendarCarousel: FC<CalendarCarouselProps> = (props) => {
 
   const [, updateRender] = useState({})
   const forceRerender = useCallback(() => updateRender({}), [])
-
-  const onNext = () => {
-    if (animation.current.transform > -(totalWidthOfCardsContainer - cardsPerView * animationDistance)) {
-      animation.current.transform -= animationDistance
-      forceRerender()
-    }
-  }
-
-  const onPrev = () => {
-    if (animation.current.transform < initialPosition) {
-      animation.current.transform += animationDistance
-      forceRerender()
-    }
-  }
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     swipe.current.isMouseDown = true
@@ -96,53 +81,43 @@ const CalendarCarousel: FC<CalendarCarouselProps> = (props) => {
   }
 
   return (
-    <Fragment>
+    <div
+      style={{
+        display: 'flex',
+        overflow: 'hidden',
+        position: 'relative',
+        width: containerWidth,
+        margin: '10px 0',
+      }}
+    >
       <div
         style={{
           display: 'flex',
-          overflow: 'hidden',
-          position: 'relative',
-          width: containerWidth,
-          margin: '10px 0',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: cardGap,
+          margin: '15px 0',
+          transition: 'transform 0.3s',
+          transform: `translateX(${animation.current.transform + cardGap}px)`,
         }}
+        onMouseDown={handleMouseDown}
       >
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: cardGap,
-            margin: '15px 0',
-            transition: 'transform 0.3s',
-            transform: `translateX(${animation.current.transform + cardGap}px)`,
-          }}
-          onMouseDown={handleMouseDown}
-        >
-          {props.data.map((day) => {
-            return (
-              <div
-                key={day.date.valueOf()}
-                style={{
-                  display: 'inline-flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <Card date={day.date} width={cardWidth} onClick={() => props.onSelectDate && props.onSelectDate(day.date)} />
-              </div>
-            )
-          })}
-        </div>
+        {props.data.map((day) => {
+          return (
+            <div
+              key={day.date.valueOf()}
+              style={{
+                display: 'inline-flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Card date={day.date} width={cardWidth} onClick={() => props.onSelectDate && props.onSelectDate(day.date)} closed={day.closed} />
+            </div>
+          )
+        })}
       </div>
-      <Row justify={'space-evenly'} align={'middle'}>
-        <Col>
-          <Button onClick={onPrev}>Prev</Button>
-        </Col>
-        <Col>
-          <Button onClick={onNext}>Next</Button>
-        </Col>
-      </Row>
-    </Fragment>
+    </div>
   )
 }
 

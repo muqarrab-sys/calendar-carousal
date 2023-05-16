@@ -1,10 +1,9 @@
 import { Grid } from 'antd'
-import { Dayjs } from 'dayjs'
-import { RangeValue } from 'rc-picker/lib/interface'
+import dayjs, { Dayjs } from 'dayjs'
 import React, { FC, ReactNode, createContext, useContext, useState } from 'react'
-import { CARDS_GAP, CARDS_PER_VIEW, CARD_WIDTH, DATE_FORMAT, TIME_FORMAT } from '../constants'
-import getDates, { IDates } from '../helpers/getDates'
-import { Formats } from '../types'
+import { CARDS_GAP, CARDS_PER_VIEW, CARD_WIDTH, DATE_FORMAT, DURATION_STEP, TIME_FORMAT } from '../constants'
+import { Formats, IDate } from '../types'
+import { getDatesByNumber } from '../helpers'
 
 const { useBreakpoint } = Grid
 
@@ -24,43 +23,95 @@ export interface StylesConfig {
 }
 
 export interface AppointmentCalenderContext<T = Dayjs> {
-  dates: IDates<T>[]
+  dates: IDate<T>[]
   formats: Formats
   stylesConfig: StylesConfig
-  selectedDates: Selected
-  setSelectedDates(args: Partial<Selected>): void
+  values: Selected
+  durationStep: number
+  setDate(datetime: T): void
+  setDuration(duration: number): void
+  setDatesList(prevState: IDate<T>[]): void
+  addTime(value: number, type: dayjs.ManipulateType): T
+  subtractTime(value: number, type: dayjs.ManipulateType): T
+  increaseDuration(increaseBy: number): number
+  decreaseDuration(decreaseBy: number): number
 }
 
 export interface AppointmentCalenderProviderProps<T = Dayjs> {
   children: ReactNode
-  dates?: IDates<T>[]
+  dates?: IDate<T>[]
   formats?: Formats
   stylesConfigs?: StylesConfig
+  /**
+   * @default 30
+   */
+  durationStep?: number
 }
 
 export interface Selected<T = Dayjs> {
-  date: T
-  duration: RangeValue<T>
+  datetime: T
+  duration: number
 }
 
 const AppointmentCalender = createContext<AppointmentCalenderContext | undefined>(undefined)
 
-export const AppointmentCalenderProvider: FC<AppointmentCalenderProviderProps> = ({ children, dates, formats, stylesConfigs }) => {
+export const AppointmentCalenderProvider: FC<AppointmentCalenderProviderProps> = ({ children, dates, formats, stylesConfigs, durationStep }) => {
   const { xs } = useBreakpoint()
 
-  const [calenderDates] = useState<IDates[]>(dates || getDates())
-  const [selectedDates, __setSelectedDates] = useState<Selected>({
-    date: calenderDates[0].date,
-    duration: null,
+  const [calenderDates, setCalenderDates] = useState<IDate[]>(dates || getDatesByNumber(2, 'month'))
+  const [values, __setValues] = useState<Selected>({
+    datetime: calenderDates[0].date,
+    duration: 60,
   })
 
-  const setSelectedDates = (args: Partial<Selected>) => {
-    __setSelectedDates((prev) => ({ ...prev, ...args }))
+  const setDatesList = (data: IDate[]) => {
+    setCalenderDates(data)
+  }
+
+  const setDate = (datetime: Dayjs) => {
+    __setValues((prev) => ({ ...prev, datetime }))
+  }
+
+  const setDuration = (duration: number) => {
+    __setValues((prev) => ({ ...prev, duration }))
+  }
+
+  const increaseDuration = (increaseBy: number) => {
+    const duration = values.duration + increaseBy
+    __setValues((prev) => ({ ...prev, duration }))
+    return duration
+  }
+  const decreaseDuration = (decreaseBy: number) => {
+    const duration = values.duration - decreaseBy
+    if (duration >= 0) {
+      __setValues((prev) => ({ ...prev, duration }))
+      return duration
+    }
+    return values.duration
+  }
+
+  const addTime = (value: number, type: dayjs.ManipulateType) => {
+    const datetime = values.datetime.add(value, type)
+    __setValues((prev) => ({ ...prev, datetime }))
+    return datetime
+  }
+  const subtractTime = (value: number, type: dayjs.ManipulateType) => {
+    const datetime = values.datetime.subtract(value, type)
+    __setValues((prev) => ({ ...prev, datetime }))
+    return datetime
   }
 
   return (
     <AppointmentCalender.Provider
       value={{
+        values,
+        setDate,
+        setDatesList,
+        setDuration,
+        addTime,
+        subtractTime,
+        increaseDuration,
+        decreaseDuration,
         dates: calenderDates,
         formats: {
           date: formats?.date || DATE_FORMAT,
@@ -71,8 +122,7 @@ export const AppointmentCalenderProvider: FC<AppointmentCalenderProviderProps> =
           cardWidth: stylesConfigs?.cardWidth || CARD_WIDTH,
           gap: stylesConfigs?.gap || CARDS_GAP,
         },
-        selectedDates,
-        setSelectedDates,
+        durationStep: durationStep || DURATION_STEP,
       }}
     >
       {children}
