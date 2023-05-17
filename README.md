@@ -107,7 +107,16 @@ interface Formats = {
 interface StyleConfigs = {
   cardWidth?: number; /** @default 170 */
   gap?: number; /** @default 10 */
-  cardsPerView?: number; /** @default 3 */
+  cardsPerView?: number | BreakPoint; /** @default 3 */
+}
+
+interface BreakPoint {
+  xs?: number
+  sm?: number
+  md?: number
+  lg?: number
+  xl?: number
+  xxl?: number
 }
 ```
 
@@ -120,7 +129,7 @@ This is the main component and can be used as is with `useAppointment`, or can b
 | data         | IDate[]                        | Provide custom dates list if not using Provider      | -       |
 | formats      | Object                         | Provide the custom format for `Date` and `Time`      | -       |
 | gap          | number                         | Space between each card within carousel              | 10      |
-| cardsPerView | number                         | Number of cards shown per view in carousel           | 3       |
+| cardsPerView | number or BreakPoint           | Number of cards shown per view in carousel           | 3       |
 | cardWidth    | number                         | Width of the `CalenderCard`                          | 170     |
 | durationStep | number                         | Amount by which duration should increase or decrease | 30      |
 | onChange     | ({dateTime, duration}) => void | callback each time any value is changed              | -       |
