@@ -3,8 +3,8 @@ import { Col, Collapse, Radio, Row, Typography, theme } from 'antd'
 import dayjs, { Dayjs } from 'dayjs'
 import React, { useState } from 'react'
 import { CalendarCarousel, TimeLever } from './components'
-import { useAppointmentCalender } from './hooks'
-import { Formats, IDate } from './types'
+import { useAppointmentCalender, useCalculateCardsPerView } from './hooks'
+import { Breakpoints, Formats, IDate } from './types'
 
 const { Panel } = Collapse
 const { Text } = Typography
@@ -24,7 +24,7 @@ export interface CalendarAppointmentProps {
   /**
    * @default 3
    */
-  cardsPerView?: number
+  cardsPerView?: number | Breakpoints
   /**
    * @default 10
    */
@@ -43,13 +43,13 @@ export interface CalendarAppointmentProps {
 const CalendarAppointment: React.FC<CalendarAppointmentProps> = (props) => {
   const context = useAppointmentCalender()
   const { token } = theme.useToken()
+  const cardsPerView = useCalculateCardsPerView(props.cardsPerView || context.stylesConfig.cardsPerView)
 
-  const gap = props.gap || context.stylesConfig.gap
+  const gap = props.gap || (context.stylesConfig.gap as number)
   const dates = props.data || context.dates
-  const cardWidth = props.cardWidth || context.stylesConfig.cardWidth
+  const cardWidth = props.cardWidth || (context.stylesConfig.cardWidth as number)
   const dateFormat = props.formats?.date || context.formats.date
   const timeFormat = props.formats?.time || context.formats.time
-  const cardsPerView = props.cardsPerView || context.stylesConfig.cardsPerView
   const durationStep = props.durationStep || context.durationStep
 
   const [activePanel, setActivePanel] = useState<string | string[]>([])
@@ -90,7 +90,7 @@ const CalendarAppointment: React.FC<CalendarAppointmentProps> = (props) => {
         onChange={(key) => setActivePanel(key)}
         activeKey={activePanel}
         expandIconPosition={'end'}
-        expandIcon={() => <CaretDownOutlined style={{ ...PanelFontStyle, color: token['blue-8'] }} />}
+        expandIcon={() => <CaretDownOutlined style={{ ...PanelFontStyle, color: token.colorPrimary }} />}
         ghost
       >
         <Panel key='1' header={<Text style={PanelFontStyle}>Date</Text>} extra={<Text style={PanelFontStyle}>{context.values.datetime?.format(dateFormat)} </Text>}>

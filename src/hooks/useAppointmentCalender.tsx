@@ -1,11 +1,8 @@
-import { Grid } from 'antd'
 import dayjs, { Dayjs } from 'dayjs'
 import React, { FC, ReactNode, createContext, useContext, useState } from 'react'
-import { CARDS_GAP, CARDS_PER_VIEW, CARD_WIDTH, DATE_FORMAT, DURATION_STEP, TIME_FORMAT } from '../constants'
-import { Formats, IDate } from '../types'
+import { CARDS_GAP, CARD_WIDTH, DATE_FORMAT, DURATION_STEP, TIME_FORMAT } from '../constants'
 import { getDatesByNumber } from '../helpers'
-
-const { useBreakpoint } = Grid
+import { Breakpoints, Formats, IDate } from '../types'
 
 export interface StylesConfig {
   /**
@@ -17,15 +14,15 @@ export interface StylesConfig {
    */
   gap: number
   /**
-   * @default "xs|sm: 1, else: 3"
+   * @default "xs: 1, else: 3"
    */
-  cardsPerView: number
+  cardsPerView: number | Breakpoints
 }
 
 export interface AppointmentCalenderContext<T = Dayjs> {
   dates: IDate<T>[]
   formats: Formats
-  stylesConfig: StylesConfig
+  stylesConfig: Partial<StylesConfig>
   values: Selected
   durationStep: number
   setDate(datetime: T): void
@@ -56,8 +53,6 @@ export interface Selected<T = Dayjs> {
 const AppointmentCalender = createContext<AppointmentCalenderContext | undefined>(undefined)
 
 export const AppointmentCalenderProvider: FC<AppointmentCalenderProviderProps> = ({ children, dates, formats, stylesConfigs, durationStep }) => {
-  const { xs } = useBreakpoint()
-
   const [calenderDates, setCalenderDates] = useState<IDate[]>(dates || getDatesByNumber(2, 'month'))
   const [values, __setValues] = useState<Selected>({
     datetime: calenderDates[0].date,
@@ -118,7 +113,7 @@ export const AppointmentCalenderProvider: FC<AppointmentCalenderProviderProps> =
           time: formats?.time || TIME_FORMAT,
         },
         stylesConfig: {
-          cardsPerView: stylesConfigs?.cardsPerView || xs ? 1 : CARDS_PER_VIEW,
+          cardsPerView: stylesConfigs?.cardsPerView,
           cardWidth: stylesConfigs?.cardWidth || CARD_WIDTH,
           gap: stylesConfigs?.gap || CARDS_GAP,
         },

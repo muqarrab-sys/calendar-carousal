@@ -10,7 +10,6 @@ interface TimeLeverProps {
   middle: any
   justify?: RowProps['justify']
   align?: RowProps['align']
-  span?: [number | undefined, number | undefined, number | undefined]
 }
 
 const TimeLever: React.FC<TimeLeverProps> = ({ onLeftPress, onRightPress, middle, justify = 'center', align = 'middle' }) => {
@@ -19,7 +18,7 @@ const TimeLever: React.FC<TimeLeverProps> = ({ onLeftPress, onRightPress, middle
   return (
     <Row gutter={10} justify={justify} align={align}>
       <Col>
-        <Button shape='circle' icon={<MinusOutlined />} onClick={onLeftPress} />
+        <Button shape='circle' icon={<MinusOutlined style={{ color: token.colorPrimary }} />} onClick={onLeftPress} style={{ borderColor: token.colorPrimary }} />
       </Col>
 
       <Col span={10} style={{ textAlign: 'center' }}>
@@ -27,7 +26,7 @@ const TimeLever: React.FC<TimeLeverProps> = ({ onLeftPress, onRightPress, middle
       </Col>
 
       <Col>
-        <Button shape='circle' icon={<PlusOutlined />} onClick={onRightPress} />
+        <Button shape='circle' icon={<PlusOutlined style={{ color: token.colorPrimary }} />} onClick={onRightPress} style={{ borderColor: token.colorPrimary }} />
       </Col>
     </Row>
   )
