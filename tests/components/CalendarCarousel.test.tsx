@@ -3,11 +3,10 @@ import { render } from '@testing-library/react'
 
 import 'jest-canvas-mock'
 
-import { CalendarCarousel } from '../../src/components'
-import getDate from '../../src/helpers/getDates'
+import { CalendarCarousel, getDates } from '../../src'
 
 describe('Carousel', () => {
   it('Renders', () => {
-    render(<CalendarCarousel data={getDate()} />)
+    render(<CalendarCarousel data={getDates()} />)
   })
 })
