@@ -2,7 +2,7 @@ import { Dayjs } from 'dayjs'
 import React, { FC, useCallback, useRef, useState } from 'react'
 import { CARDS_GAP, CARDS_PER_VIEW, CARD_WIDTH } from '../../constants'
 import { IDate } from '../../types'
-import Card from '../CalenderCard'
+import CalenderCard from '../CalenderCard'
 
 export interface CalendarCarouselProps {
   /**
@@ -20,6 +20,10 @@ export interface CalendarCarouselProps {
 
   data: IDate[]
   containerWidth?: number
+  cardStyles?: {
+    head?: React.CSSProperties
+    body?: React.CSSProperties
+  }
   onSelectDate?(date: Dayjs): void
 }
 
@@ -112,7 +116,14 @@ const CalendarCarousel: FC<CalendarCarouselProps> = (props) => {
                 alignItems: 'center',
               }}
             >
-              <Card date={day.date} width={cardWidth} onClick={() => props.onSelectDate && props.onSelectDate(day.date)} closed={day.closed} />
+              <CalenderCard
+                date={day.date}
+                width={cardWidth}
+                onClick={() => props.onSelectDate && props.onSelectDate(day.date)}
+                closed={day.closed}
+                headStyle={props?.cardStyles?.head}
+                bodyStyle={props?.cardStyles?.body}
+              />
             </div>
           )
         })}

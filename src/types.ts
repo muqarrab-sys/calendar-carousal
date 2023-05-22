@@ -13,7 +13,6 @@ export interface Formats {
 
 export interface IDate<T = Dayjs> {
   date: T
-  isCurrent?: boolean
   closed?: boolean
 }
 

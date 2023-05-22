@@ -37,6 +37,12 @@ export interface CalendarAppointmentProps {
   durationStep?: number
 
   containerStyle?: React.CSSProperties
+  collapseContainerStyle?: React.CSSProperties
+  durationContainerStyles?: React.CSSProperties
+  cardStyles?: {
+    head?: React.CSSProperties
+    body?: React.CSSProperties
+  }
   onChange?(args: { datetime: Dayjs; duration: number | null }): void
 }
 
@@ -56,7 +62,7 @@ const CalendarAppointment: React.FC<CalendarAppointmentProps> = (props) => {
 
   const onSelect = (datetime: Dayjs) => {
     context.setDate(datetime)
-    setActivePanel([])
+    setActivePanel(['2'])
     if (props?.onChange) props.onChange({ datetime, duration: context.values.duration })
   }
 
@@ -85,26 +91,43 @@ const CalendarAppointment: React.FC<CalendarAppointmentProps> = (props) => {
   const PanelFontStyle = { fontSize: token.fontSizeHeading5, fontWeight: token.fontWeightStrong }
 
   return (
-    <div style={{ minWidth: cardWidth * cardsPerView + gap * (cardsPerView + 1) + token.size * 2 }}>
+    <div style={{ minWidth: cardWidth * cardsPerView + gap * (cardsPerView + 1) + token.size * 2, ...props.containerStyle }}>
       <Collapse
+        style={props.collapseContainerStyle}
         onChange={(key) => setActivePanel(key)}
         activeKey={activePanel}
         expandIconPosition={'end'}
         expandIcon={() => <CaretDownOutlined style={{ ...PanelFontStyle, color: token.colorPrimary }} />}
         ghost
       >
-        <Panel key='1' header={<Text style={PanelFontStyle}>Date</Text>} extra={<Text style={PanelFontStyle}>{context.values.datetime?.format(dateFormat)} </Text>}>
-          <CalendarCarousel data={dates} onSelectDate={onSelect} cardsPerView={cardsPerView} gap={gap} cardWidth={cardWidth} />
+        <Panel
+          key='1'
+          header={<Text style={PanelFontStyle}>Date</Text>}
+          extra={<Text style={PanelFontStyle}>{context.values.datetime?.isToday() ? 'Today' : context.values.datetime?.format(dateFormat)}</Text>}
+        >
+          <CalendarCarousel data={dates} onSelectDate={onSelect} cardsPerView={cardsPerView} gap={gap} cardWidth={cardWidth} cardStyles={props.cardStyles} />
         </Panel>
 
         <Panel key='2' header={<Text style={PanelFontStyle}>Time</Text>} extra={<Text style={PanelFontStyle}>{context.values.datetime?.format(timeFormat)} </Text>}>
           <Row wrap gutter={[0, 16]}>
             <Col xs={24} sm={8} md={8}>
-              <TimeLever onRightPress={() => onAddTime(1, 'hour')} onLeftPress={() => onSubtractTime(1, 'hour')} middle={context.values.datetime.format('h')} />
+              <TimeLever
+                disableLeft={!context.canSubtractTime('hours')}
+                disableRight={!context.canAddTime('hours')}
+                onRightPress={() => onAddTime(1, 'hour')}
+                onLeftPress={() => onSubtractTime(1, 'hour')}
+                middle={context.values.datetime.format('h')}
+              />
             </Col>
 
             <Col xs={24} sm={8} md={8}>
-              <TimeLever onRightPress={() => onAddTime(1, 'minute')} onLeftPress={() => onSubtractTime(1, 'minute')} middle={context.values.datetime.format('mm')} />
+              <TimeLever
+                disableLeft={!context.canSubtractTime('minutes')}
+                disableRight={!context.canAddTime('minutes')}
+                onRightPress={() => onAddTime(1, 'minute')}
+                onLeftPress={() => onSubtractTime(1, 'minute')}
+                middle={context.values.datetime.format('mm')}
+              />
             </Col>
 
             <Col xs={24} sm={8} md={8} style={{ textAlign: 'center' }}>
@@ -127,7 +150,7 @@ const CalendarAppointment: React.FC<CalendarAppointmentProps> = (props) => {
         </Panel>
       </Collapse>
 
-      <Row justify={'space-between'} style={{ padding: `${token.sizeSM}px ${token.size}px` }}>
+      <Row justify={'space-between'} style={{ padding: `${token.sizeSM}px ${token.size}px`, ...props.durationContainerStyles }}>
         <Col span={12}>
           <Text style={PanelFontStyle}>Duration</Text>
         </Col>

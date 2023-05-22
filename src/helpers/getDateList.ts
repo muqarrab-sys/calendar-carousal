@@ -1,4 +1,4 @@
-import dayjs, { Dayjs } from 'dayjs'
+import { Dayjs } from 'dayjs'
 import { ClosedDays, IDate } from '../types'
 
 /**
@@ -19,7 +19,6 @@ export default function getDateList(start: Dayjs, end: Dayjs, closedDays?: Close
 
     dates.push({
       date: nextDate,
-      isCurrent: nextDate.valueOf() === dayjs().valueOf(),
       closed: closedDays?.some((item) => item === nextDate.format('dddd')) || false,
     })
 

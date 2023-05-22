@@ -32,6 +32,8 @@ export interface AppointmentCalenderContext<T = Dayjs> {
   subtractTime(value: number, type: dayjs.ManipulateType): T
   increaseDuration(increaseBy: number): number
   decreaseDuration(decreaseBy: number): number
+  canAddTime(by: 'hours' | 'minutes'): boolean
+  canSubtractTime(by: 'hours' | 'minutes'): boolean
 }
 
 export interface AppointmentCalenderProviderProps<T = Dayjs> {
@@ -96,6 +98,26 @@ export const AppointmentCalenderProvider: FC<AppointmentCalenderProviderProps> =
     return datetime
   }
 
+  const canAddTime = (by: 'hours' | 'minutes') => {
+    const hour = values.datetime.format('H')
+    const minute = values.datetime.format('m')
+
+    if (by === 'hours' && hour === '23') return false
+    if (by === 'minutes' && hour === '23' && minute === '59') return false
+
+    return true
+  }
+
+  const canSubtractTime = (by: 'hours' | 'minutes') => {
+    const hour = values.datetime.format('H')
+    const minute = values.datetime.format('m')
+
+    if (by === 'hours' && hour === '0') return false
+    if (by === 'minutes' && hour === '0' && minute === '0') return false
+
+    return true
+  }
+
   return (
     <AppointmentCalender.Provider
       value={{
@@ -107,6 +129,8 @@ export const AppointmentCalenderProvider: FC<AppointmentCalenderProviderProps> =
         subtractTime,
         increaseDuration,
         decreaseDuration,
+        canAddTime,
+        canSubtractTime,
         dates: calenderDates,
         formats: {
           date: formats?.date || DATE_FORMAT,

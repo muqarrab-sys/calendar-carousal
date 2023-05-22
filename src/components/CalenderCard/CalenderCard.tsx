@@ -9,6 +9,8 @@ export interface CalenderCardProps {
   closed?: boolean
   width?: number
   onClick?: (e: MouseEvent) => void
+  headStyle?: React.CSSProperties
+  bodyStyle?: React.CSSProperties
 }
 
 const unSelectable: React.CSSProperties = {
@@ -18,7 +20,7 @@ const unSelectable: React.CSSProperties = {
   WebkitUserSelect: 'none',
 }
 
-const CalenderCard: React.FC<CalenderCardProps> = ({ date, closed, width, onClick }) => {
+const CalenderCard: React.FC<CalenderCardProps> = ({ date, closed, width, onClick, headStyle, bodyStyle }) => {
   const { token } = useToken()
 
   return (
@@ -29,11 +31,13 @@ const CalenderCard: React.FC<CalenderCardProps> = ({ date, closed, width, onClic
         backgroundColor: closed ? token.colorTextDisabled : token['red-6'],
         color: 'white',
         textAlign: 'center',
+        ...headStyle,
       }}
       bodyStyle={{
         padding: '0 24px',
         textAlign: 'center',
         height: (width || 0) / 1.1,
+        ...bodyStyle,
       }}
       style={{ width: width }}
       onClick={(e) => {

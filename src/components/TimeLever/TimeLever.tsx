@@ -10,15 +10,23 @@ interface TimeLeverProps {
   middle: any
   justify?: RowProps['justify']
   align?: RowProps['align']
+  disableLeft?: boolean
+  disableRight?: boolean
 }
 
-const TimeLever: React.FC<TimeLeverProps> = ({ onLeftPress, onRightPress, middle, justify = 'center', align = 'middle' }) => {
+const TimeLever: React.FC<TimeLeverProps> = ({ onLeftPress, onRightPress, middle, justify = 'center', align = 'middle', disableLeft, disableRight }) => {
   const { token } = theme.useToken()
 
   return (
     <Row gutter={10} justify={justify} align={align}>
       <Col>
-        <Button shape='circle' icon={<MinusOutlined style={{ color: token.colorPrimary }} />} onClick={onLeftPress} style={{ borderColor: token.colorPrimary }} />
+        <Button
+          disabled={disableLeft}
+          shape='circle'
+          icon={<MinusOutlined style={{ color: token.colorPrimary }} />}
+          onClick={onLeftPress}
+          style={{ borderColor: token.colorPrimary }}
+        />
       </Col>
 
       <Col span={10} style={{ textAlign: 'center' }}>
@@ -26,7 +34,13 @@ const TimeLever: React.FC<TimeLeverProps> = ({ onLeftPress, onRightPress, middle
       </Col>
 
       <Col>
-        <Button shape='circle' icon={<PlusOutlined style={{ color: token.colorPrimary }} />} onClick={onRightPress} style={{ borderColor: token.colorPrimary }} />
+        <Button
+          disabled={disableRight}
+          shape='circle'
+          icon={<PlusOutlined style={{ color: token.colorPrimary }} />}
+          onClick={onRightPress}
+          style={{ borderColor: token.colorPrimary }}
+        />
       </Col>
     </Row>
   )
