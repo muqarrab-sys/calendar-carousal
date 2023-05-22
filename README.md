@@ -91,7 +91,6 @@ This is a Wrapper for the appointment state management and pre-configurations.
 ```ts
 interface IDate = {
   dates: Dayjs;
-  isCurrent: boolean; /** wether date is today */
   closed: boolean;
 }
 ```
@@ -124,15 +123,47 @@ interface BreakPoint {
 
 This is the main component and can be used as is with `useAppointment`, or can be used as a controlled component.
 
-| Prop         | Type                           | Description                                          | Default |
-| ------------ | ------------------------------ | ---------------------------------------------------- | ------- |
-| data         | IDate[]                        | Provide custom dates list if not using Provider      | -       |
-| formats      | Object                         | Provide the custom format for `Date` and `Time`      | -       |
-| gap          | number                         | Space between each card within carousel              | 10      |
-| cardsPerView | number or BreakPoint           | Number of cards shown per view in carousel           | 3       |
-| cardWidth    | number                         | Width of the `CalenderCard`                          | 170     |
-| durationStep | number                         | Amount by which duration should increase or decrease | 30      |
-| onChange     | ({dateTime, duration}) => void | callback each time any value is changed              | -       |
+| Prop                    | Type                                        | Description                                          | Default |
+| ----------------------- | ------------------------------------------- | ---------------------------------------------------- | ------- |
+| data                    | IDate[]                                     | Provide custom dates list if not using Provider      | -       |
+| formats                 | Object                                      | Provide the custom format for `Date` and `Time`      | -       |
+| gap                     | number                                      | Space between each card within carousel              | 10      |
+| cardsPerView            | number or BreakPoint                        | Number of cards shown per view in carousel           | 3       |
+| cardWidth               | number                                      | Width of the `CalenderCard`                          | 170     |
+| durationStep            | number                                      | Amount by which duration should increase or decrease | 30      |
+| onChange                | ({dateTime, duration}) => void              | callback each time any value is changed              | -       |
+| containerStyle          | CSSProperties                               | Component container styles object                    | -       |
+| collapseContainerStyle  | CSSProperties                               | Collapse container styles object                     | -       |
+| durationContainerStyles | CSSProperties                               | Duration panel container styles object               | -       |
+| durationContainerStyles | CSSProperties                               | Duration panel container styles object               | -       |
+| cardStyles              | {head?: CSSProperties, body: CSSProperties} | CalenderCard component styles object                 | -       |
+
+### `CalendarCarousel`
+
+This is carousel component used in `CalendarAppointment` component.
+
+| Prop           | Type                                        | Description                                                  | Default    |
+| -------------- | ------------------------------------------- | ------------------------------------------------------------ | ---------- |
+| data           | IDate[]                                     | Provide custom dates list if not using Provider              | -          |
+| gap            | number                                      | Space between each card within carousel                      | 10         |
+| cardsPerView   | number or BreakPoint                        | Number of cards shown per view in carousel                   | 3          |
+| cardWidth      | number                                      | Width of the `CalenderCard`                                  | 170        |
+| containerWidth | number                                      | Custom width of the container (recommended to leave default) | calculated |
+| cardStyles     | {head?: CSSProperties, body: CSSProperties} | CalenderCard component styles object                         | -          |
+| onSelectDate   | (date: Dayjs) => void                       | Callback when date is selected                               | -          |
+
+### `CalenderCard`
+
+This is calender card component used in `CalendarCarousel` component. Internally antd's `Card` component is used.
+
+| Prop      | Type                    | Description                                      | Default |
+| --------- | ----------------------- | ------------------------------------------------ | ------- |
+| date      | Dayjs                   | Date to be displayed on the card                 | -       |
+| closed    | boolean                 | If `true`, card will be grayed and un-selectable | false   |
+| width     | number                  | Width of the card                                | -       |
+| onClick   | (e: MouseEvent) => void | Callback on click                                | -       |
+| headStyle | CSSProperties           | Styles object for head part of the card          | -       |
+| bodyStyle | CSSProperties           | Styles object for body part of the card          | -       |
 
 ### Hooks
 
@@ -157,6 +188,8 @@ This contains all the configs and state of the appointment calender.
 | subtractTime     | (value: number, type: string): Dayjs | Subtract time from current selected date object and returns it     |
 | increaseDuration | (number): number                     | Adds time into duration and returns updated duration               |
 | decreaseDuration | (number): number                     | Subtract time from duration and returns updated duration           |
+| canAddTime       | (by: 'hours' or 'minutes'): boolean  | returns true if time can be added without changing day             |
+| canSubtractTime  | (by: 'hours' or 'minutes'): boolean  | returns true if time can be subtracted without changing day        |
 
 ```ts
 interface SelectedValues {
