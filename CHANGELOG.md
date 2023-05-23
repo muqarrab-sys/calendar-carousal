@@ -1,5 +1,25 @@
 # master
 
+# 1.3.0
+
+1. Added Design Tokens, which can be provided to `AppointmentCalenderProvider` for customization.
+   | Token | Description | Type | Default |
+   | --------------------- | --------------------------------------------------- | -------------------- | ---------- |
+   | calenderColor | Color of the header of `CalenderCard` when active | string | '#ff4d4f', |
+   | calenderDisabledColor | Color of the header of `CalenderCard` when disabled | string | '#8c8c8c', |
+   | calenderTextColor | Color of date and day fonts in `CalenderCard` | string | '#8c8c8c', |
+   | fontSizeSM | Small font size | number | 12, |
+   | fontSize | Standard font size | number | 14, |
+   | fontSizeLG | Large font size | number | 16, |
+   | fontSizeXL | Super large font size | number | 20, |
+   | fontSizeXXL | Extra super large font size | number | 24, |
+   | fontSizeXXXL | Extra super duper large font size | number | 30, |
+   | calenderDateFontSize | font size of date in `CalenderCard` | number | 40, |
+   | calenderCardSize | Size of the `CalenderCard` | number | 170, |
+   | calenderCardGap | Gap between `CalenderCard` components | number | 10, |
+   | calenderCardsPerView | Number of `CalenderCard` shown per view | number or Breakpoint | 3, |
+2. Removed style props related to some components. ( _These are moved to design token_ )
+
 # 1.2.1
 
 1. Added new `minDuration` and `maxDuration` props for restricting to a min/max duration time in the `CalendarAppointment` component and `useAppointmentCalender` hook.
@@ -8,7 +28,6 @@
    | minDuration | number | Minimum time the duration can be | 30 |
    | maxDuration | number | Maximum time the duration can be | 120 |
 2. Added capability to add custom components for `CalendarAppointment` panels.
-
 
 # 1.2.0
 
