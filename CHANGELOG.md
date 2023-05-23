@@ -1,5 +1,15 @@
 # master
 
+# 1.2.1
+
+1. Added new `minDuration` and `maxDuration` props for restricting to a min/max duration time in the `CalendarAppointment` component and `useAppointmentCalender` hook.
+   | Prop | Type | Description | Default |
+   | --- | --- | --- | --- |
+   | minDuration | number | Minimum time the duration can be | 30 |
+   | maxDuration | number | Maximum time the duration can be | 120 |
+2. Added capability to add custom components for `CalendarAppointment` panels.
+
+
 # 1.2.0
 
 1. Added styles props for following components:
