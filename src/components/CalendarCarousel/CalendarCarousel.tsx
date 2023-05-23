@@ -1,24 +1,12 @@
 import { Dayjs } from 'dayjs'
 import React, { FC, useCallback, useRef, useState } from 'react'
-import { CARDS_GAP, CARDS_PER_VIEW, CARD_WIDTH } from '../../constants'
+import { useToken } from '../../theme'
 import { IDate } from '../../types'
 import CalenderCard from '../CalenderCard'
+import { useCalculateCardsPerView } from '../../hooks'
 
 export interface CalendarCarouselProps {
-  /**
-   * @default 170
-   */
-  cardWidth?: number
-  /**
-   * @default 10
-   */
-  gap?: number
-  /**
-   * @default 3
-   */
-  cardsPerView?: number
-
-  data: IDate[]
+  dates: IDate[]
   containerWidth?: number
   cardStyles?: {
     head?: React.CSSProperties
@@ -28,12 +16,12 @@ export interface CalendarCarouselProps {
 }
 
 const CalendarCarousel: FC<CalendarCarouselProps> = (props) => {
-  const cardWidth = props.cardWidth || CARD_WIDTH
-  const cardGap = props.gap || CARDS_GAP
-  const cardsPerView = props.cardsPerView || CARDS_PER_VIEW
-  const containerWidth = props.containerWidth || cardWidth * cardsPerView + cardGap * (cardsPerView + 1)
-  const totalWidthOfCardsContainer = props.data.length * cardWidth + props.data.length * cardGap - cardGap
-  const animationDistance = cardWidth + cardGap
+  const [, token] = useToken()
+  const cardsPerView = useCalculateCardsPerView(token.calenderCardsPerView)
+
+  const datesLength = props.dates.length
+  const containerWidth = props.containerWidth || token.calenderCardSize * cardsPerView + token.calenderCardGap * (cardsPerView + 1)
+  const totalWidthOfCardsContainer = datesLength * token.calenderCardSize + datesLength * token.calenderCardGap - token.calenderCardGap
   const initialPosition = 0
   const swipeBounce = 50
 
@@ -62,7 +50,7 @@ const CalendarCarousel: FC<CalendarCarouselProps> = (props) => {
       const diff = e.clientX - (swipe.current.positionOnMouseDown || 0)
       const newValue = (swipe.current.transformPosition || 0) + diff
 
-      if (newValue <= swipeBounce && animation.current.transform >= -(totalWidthOfCardsContainer + 20 - animationDistance * 3)) {
+      if (newValue <= swipeBounce && animation.current.transform >= -(totalWidthOfCardsContainer + 20 - token.animationDistance * 3)) {
         animation.current.transform = newValue
         forceRerender()
       }
@@ -73,11 +61,11 @@ const CalendarCarousel: FC<CalendarCarouselProps> = (props) => {
     swipe.current.isMouseDown = false
     swipe.current.positionOnMouseDown = null
 
-    const reachedIndex = Math.round(animation.current.transform / animationDistance)
-    const maxReachableIndex = cardsPerView - props.data.length
+    const reachedIndex = Math.round(animation.current.transform / token.animationDistance)
+    const maxReachableIndex = cardsPerView - datesLength
     const index = reachedIndex < maxReachableIndex ? maxReachableIndex : reachedIndex
 
-    animation.current.transform = index * animationDistance
+    animation.current.transform = index * token.animationDistance
     forceRerender()
 
     document.removeEventListener('mousemove', handleMouseMove)
@@ -99,14 +87,14 @@ const CalendarCarousel: FC<CalendarCarouselProps> = (props) => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          gap: cardGap,
+          gap: token.calenderCardGap,
           margin: '15px 0',
           transition: 'transform 0.3s',
-          transform: `translateX(${animation.current.transform + cardGap}px)`,
+          transform: `translateX(${animation.current.transform + token.calenderCardGap}px)`,
         }}
         onMouseDown={handleMouseDown}
       >
-        {props.data.map((day) => {
+        {props.dates.map((day) => {
           return (
             <div
               key={day.date.valueOf()}
@@ -118,7 +106,6 @@ const CalendarCarousel: FC<CalendarCarouselProps> = (props) => {
             >
               <CalenderCard
                 date={day.date}
-                width={cardWidth}
                 onClick={() => props.onSelectDate && props.onSelectDate(day.date)}
                 closed={day.closed}
                 headStyle={props?.cardStyles?.head}

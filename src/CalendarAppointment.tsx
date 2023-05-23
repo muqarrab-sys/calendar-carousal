@@ -4,7 +4,8 @@ import { Dayjs } from 'dayjs'
 import React, { useState } from 'react'
 import { CalendarCarousel, TimeLever, TimePanel } from './components'
 import { useAppointmentCalender, useCalculateCardsPerView } from './hooks'
-import { Breakpoints, Formats, IDate } from './types'
+import { useToken } from './theme'
+import { Formats, IDate } from './types'
 
 const { Panel } = Collapse
 const { Text } = Typography
@@ -12,41 +13,29 @@ export interface CalendarAppointmentProps {
   /**
    * @default undefined
    */
-  data?: IDate[]
+  dates?: IDate[]
   /**
-   * @default 170
-   */
-  cardWidth?: number
-  /**
-   * @default 10
-   */
-  gap?: number
-  /**
-   * @default 3
-   */
-  cardsPerView?: number | Breakpoints
-  /**
-   * @default 10
-   */
-  formats?: Formats
-  /**
-   * in seconds
+   * @desc in seconds
    *
    * @default 30
    */
   durationStep?: number
   /**
-   * in seconds
+   * @desc in seconds
    *
    * @default 30
    */
   minDuration?: number
   /**
-   * in seconds
+   * @desc in seconds
    *
    * @default 120
    */
   maxDuration?: number
+  /**
+   * @desc Time and date format
+   */
+  formats?: Formats
 
   timeComponent?: React.ReactElement
   calenderComponent?: React.ReactElement
@@ -65,12 +54,11 @@ export interface CalendarAppointmentProps {
 
 const CalendarAppointment: React.FC<CalendarAppointmentProps> = (props) => {
   const context = useAppointmentCalender()
-  const { token } = theme.useToken()
-  const cardsPerView = useCalculateCardsPerView(props.cardsPerView || context.stylesConfig.cardsPerView)
+  const { token: antToken } = theme.useToken()
+  const [, token] = useToken()
+  const cardsPerView = useCalculateCardsPerView(token.calenderCardsPerView)
 
-  const gap = props.gap || (context.stylesConfig.gap as number)
-  const dates = props.data || context.dates
-  const cardWidth = props.cardWidth || (context.stylesConfig.cardWidth as number)
+  const dates = props.dates || context.dates
   const dateFormat = props.formats?.date || context.formats.date
   const timeFormat = props.formats?.time || context.formats.time
   const durationStep = props.durationStep || context.durationStep
@@ -97,16 +85,16 @@ const CalendarAppointment: React.FC<CalendarAppointmentProps> = (props) => {
 
   const hours = Math.floor(context.values.duration / 60)
   const minutes = Math.abs(context.values.duration - hours * 60)
-  const PanelFontStyle = { fontSize: token.fontSizeHeading5, fontWeight: token.fontWeightStrong }
+  const PanelFontStyle = { fontSize: token.fontSizeLG, fontWeight: antToken.fontWeightStrong }
 
   return (
-    <div style={{ minWidth: cardWidth * cardsPerView + gap * (cardsPerView + 1) + token.size * 2, ...props.containerStyle }}>
+    <div style={{ minWidth: token.calenderCardSize * cardsPerView + token.calenderCardGap * (cardsPerView + 1) + antToken.size * 2, ...props.containerStyle }}>
       <Collapse
         style={props.collapseContainerStyle}
         onChange={(key) => setActivePanel(key)}
         activeKey={activePanel}
         expandIconPosition={'end'}
-        expandIcon={() => <CaretDownOutlined style={{ ...PanelFontStyle, color: token.colorPrimary }} />}
+        expandIcon={() => <CaretDownOutlined style={{ ...PanelFontStyle, color: antToken.colorPrimary }} />}
         ghost
       >
         <Panel
@@ -114,11 +102,7 @@ const CalendarAppointment: React.FC<CalendarAppointmentProps> = (props) => {
           header={<Text style={PanelFontStyle}>Date</Text>}
           extra={<Text style={PanelFontStyle}>{context.values.datetime?.isToday() ? 'Today' : context.values.datetime?.format(dateFormat)}</Text>}
         >
-          {props.calenderComponent ? (
-            React.cloneElement(props.calenderComponent)
-          ) : (
-            <CalendarCarousel data={dates} onSelectDate={onSelect} cardsPerView={cardsPerView} gap={gap} cardWidth={cardWidth} cardStyles={props.cardStyles} />
-          )}
+          {props.calenderComponent ? React.cloneElement(props.calenderComponent) : <CalendarCarousel dates={dates} onSelectDate={onSelect} cardStyles={props.cardStyles} />}
         </Panel>
 
         <Panel key='2' header={<Text style={PanelFontStyle}>Time</Text>} extra={<Text style={PanelFontStyle}>{context.values.datetime?.format(timeFormat)} </Text>}>
@@ -126,7 +110,7 @@ const CalendarAppointment: React.FC<CalendarAppointmentProps> = (props) => {
         </Panel>
       </Collapse>
 
-      <Row justify={'space-between'} style={{ padding: `${token.sizeSM}px ${token.size}px`, ...props.durationContainerStyles }}>
+      <Row justify={'space-between'} style={{ padding: `${antToken.sizeSM}px ${antToken.size}px`, ...props.durationContainerStyles }}>
         <Col span={12}>
           <Text style={PanelFontStyle}>Duration</Text>
         </Col>

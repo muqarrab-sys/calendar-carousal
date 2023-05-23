@@ -1,12 +1,11 @@
 import dayjs from 'dayjs'
-import CalendarAppointment from './CalendarAppointment'
-import { CalendarCarousel, CalenderCard } from './components'
 import isToday from 'dayjs/plugin/isToday'
-import { getDateList, getDates, getDatesByNumber } from './helpers'
-import { AppointmentCalenderProvider, useAppointmentCalender } from './hooks'
-
 dayjs.extend(isToday)
 
-export { CalendarCarousel, CalenderCard, getDateList, getDatesByNumber, getDates, AppointmentCalenderProvider, useAppointmentCalender }
+import CalendarAppointment from './CalendarAppointment'
+export { CalendarCarousel, CalenderCard } from './components'
+export { getDateList, getDates, getDatesByNumber } from './helpers'
+export { AppointmentCalenderProvider, useAppointmentCalender } from './hooks'
+export type { DesignToken } from './theme'
 
 export default CalendarAppointment

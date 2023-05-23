@@ -1,13 +1,14 @@
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons'
 import { Button, Col, Row, RowProps, Typography, theme } from 'antd'
 import React from 'react'
+import { useToken } from '../../theme'
 
 const { Text } = Typography
 
 interface TimeLeverProps {
   onLeftPress(): void
   onRightPress(): void
-  middle: any
+  middle: string | React.ReactElement
   justify?: RowProps['justify']
   align?: RowProps['align']
   disableLeft?: boolean
@@ -15,7 +16,8 @@ interface TimeLeverProps {
 }
 
 const TimeLever: React.FC<TimeLeverProps> = ({ onLeftPress, onRightPress, middle, justify = 'center', align = 'middle', disableLeft, disableRight }) => {
-  const { token } = theme.useToken()
+  const { token: antToken } = theme.useToken()
+  const [, token] = useToken()
 
   return (
     <Row gutter={10} justify={justify} align={align}>
@@ -23,23 +25,23 @@ const TimeLever: React.FC<TimeLeverProps> = ({ onLeftPress, onRightPress, middle
         <Button
           disabled={disableLeft}
           shape='circle'
-          icon={<MinusOutlined style={{ color: token.colorPrimary }} />}
+          icon={<MinusOutlined style={{ color: antToken.colorPrimary }} />}
           onClick={onLeftPress}
-          style={{ borderColor: token.colorPrimary }}
+          style={{ borderColor: antToken.colorPrimary }}
         />
       </Col>
 
       <Col span={10} style={{ textAlign: 'center' }}>
-        <Text style={{ fontSize: token.fontSizeHeading5 }}>{middle}</Text>
+        <Text style={{ fontSize: token.fontSizeLG }}>{middle}</Text>
       </Col>
 
       <Col>
         <Button
           disabled={disableRight}
           shape='circle'
-          icon={<PlusOutlined style={{ color: token.colorPrimary }} />}
+          icon={<PlusOutlined style={{ color: antToken.colorPrimary }} />}
           onClick={onRightPress}
-          style={{ borderColor: token.colorPrimary }}
+          style={{ borderColor: antToken.colorPrimary }}
         />
       </Col>
     </Row>

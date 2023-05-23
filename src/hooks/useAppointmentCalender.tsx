@@ -1,28 +1,14 @@
 import dayjs, { Dayjs } from 'dayjs'
 import React, { FC, ReactNode, createContext, useContext, useState } from 'react'
-import { CARDS_GAP, CARD_WIDTH, DATE_FORMAT, DURATION_STEP, MAX_DURATION, MIN_DURATION, TIME_FORMAT } from '../constants'
+import { DATE_FORMAT, DURATION_STEP, MAX_DURATION, MIN_DURATION, TIME_FORMAT } from '../constants'
 import { getDatesByNumber } from '../helpers'
-import { Breakpoints, Formats, IDate } from '../types'
-
-export interface StylesConfig {
-  /**
-   * @default 170
-   */
-  cardWidth: number
-  /**
-   * @default 10
-   */
-  gap: number
-  /**
-   * @default "xs: 1, else: 3"
-   */
-  cardsPerView: number | Breakpoints
-}
+import { Formats, IDate } from '../types'
+import { DesignToken, DesignTokenContext, ThemeContext } from '../theme'
+import getDerivativeTokens from '../theme/helpers/getDerivativeTokens'
 
 export interface AppointmentCalenderContext<T = Dayjs> {
   dates: IDate<T>[]
   formats: Formats
-  stylesConfig: Partial<StylesConfig>
   values: Selected
   durationStep: number
   minDuration: number
@@ -42,13 +28,13 @@ export interface AppointmentCalenderProviderProps<T = Dayjs> {
   children: ReactNode
   dates?: IDate<T>[]
   formats?: Formats
-  stylesConfigs?: Partial<StylesConfig>
   /**
    * @default 30
    */
   durationStep?: number
   minDuration?: number
   maxDuration?: number
+  token?: Partial<DesignToken>
 }
 
 export interface Selected<T = Dayjs> {
@@ -58,7 +44,7 @@ export interface Selected<T = Dayjs> {
 
 const AppointmentCalender = createContext<AppointmentCalenderContext | undefined>(undefined)
 
-export const AppointmentCalenderProvider: FC<AppointmentCalenderProviderProps> = ({ children, dates, formats, stylesConfigs, durationStep, minDuration, maxDuration }) => {
+export const AppointmentCalenderProvider: FC<AppointmentCalenderProviderProps> = ({ children, dates, formats, durationStep, minDuration, maxDuration, token }) => {
   const [calenderDates, setCalenderDates] = useState<IDate[]>(dates || getDatesByNumber(2, 'month'))
   const [values, __setValues] = useState<Selected>({
     datetime: calenderDates[0].date,
@@ -82,6 +68,7 @@ export const AppointmentCalenderProvider: FC<AppointmentCalenderProviderProps> =
     __setValues((prev) => ({ ...prev, duration }))
     return duration
   }
+
   const decreaseDuration = (decreaseBy: number) => {
     const duration = values.duration - decreaseBy
     if (duration >= 0) {
@@ -96,6 +83,7 @@ export const AppointmentCalenderProvider: FC<AppointmentCalenderProviderProps> =
     __setValues((prev) => ({ ...prev, datetime }))
     return datetime
   }
+
   const subtractTime = (value: number, type: dayjs.ManipulateType) => {
     const datetime = values.datetime.subtract(value, type)
     __setValues((prev) => ({ ...prev, datetime }))
@@ -123,35 +111,34 @@ export const AppointmentCalenderProvider: FC<AppointmentCalenderProviderProps> =
   }
 
   return (
-    <AppointmentCalender.Provider
-      value={{
-        values,
-        setDate,
-        setDatesList,
-        setDuration,
-        minDuration: minDuration || MIN_DURATION,
-        maxDuration: maxDuration || MAX_DURATION,
-        addTime,
-        subtractTime,
-        increaseDuration,
-        decreaseDuration,
-        canAddTime,
-        canSubtractTime,
-        dates: calenderDates,
-        formats: {
-          date: formats?.date || DATE_FORMAT,
-          time: formats?.time || TIME_FORMAT,
-        },
-        stylesConfig: {
-          cardsPerView: stylesConfigs?.cardsPerView,
-          cardWidth: stylesConfigs?.cardWidth || CARD_WIDTH,
-          gap: stylesConfigs?.gap || CARDS_GAP,
-        },
-        durationStep: durationStep || DURATION_STEP,
-      }}
-    >
-      {children}
-    </AppointmentCalender.Provider>
+    <DesignTokenContext.Provider value={{ hashed: true }}>
+      <ThemeContext.Provider value={getDerivativeTokens(token)}>
+        <AppointmentCalender.Provider
+          value={{
+            values,
+            setDate,
+            setDatesList,
+            setDuration,
+            minDuration: minDuration || MIN_DURATION,
+            maxDuration: maxDuration || MAX_DURATION,
+            addTime,
+            subtractTime,
+            increaseDuration,
+            decreaseDuration,
+            canAddTime,
+            canSubtractTime,
+            dates: calenderDates,
+            formats: {
+              date: formats?.date || DATE_FORMAT,
+              time: formats?.time || TIME_FORMAT,
+            },
+            durationStep: durationStep || DURATION_STEP,
+          }}
+        >
+          {children}
+        </AppointmentCalender.Provider>
+      </ThemeContext.Provider>
+    </DesignTokenContext.Provider>
   )
 }
 
