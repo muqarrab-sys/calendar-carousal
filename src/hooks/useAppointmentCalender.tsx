@@ -1,6 +1,6 @@
 import dayjs, { Dayjs } from 'dayjs'
 import React, { FC, ReactNode, createContext, useContext, useState } from 'react'
-import { CARDS_GAP, CARD_WIDTH, DATE_FORMAT, DURATION_STEP, TIME_FORMAT } from '../constants'
+import { CARDS_GAP, CARD_WIDTH, DATE_FORMAT, DURATION_STEP, MAX_DURATION, MIN_DURATION, TIME_FORMAT } from '../constants'
 import { getDatesByNumber } from '../helpers'
 import { Breakpoints, Formats, IDate } from '../types'
 
@@ -25,6 +25,8 @@ export interface AppointmentCalenderContext<T = Dayjs> {
   stylesConfig: Partial<StylesConfig>
   values: Selected
   durationStep: number
+  minDuration: number
+  maxDuration: number
   setDate(datetime: T): void
   setDuration(duration: number): void
   setDatesList(prevState: IDate<T>[]): void
@@ -45,6 +47,8 @@ export interface AppointmentCalenderProviderProps<T = Dayjs> {
    * @default 30
    */
   durationStep?: number
+  minDuration?: number
+  maxDuration?: number
 }
 
 export interface Selected<T = Dayjs> {
@@ -54,7 +58,7 @@ export interface Selected<T = Dayjs> {
 
 const AppointmentCalender = createContext<AppointmentCalenderContext | undefined>(undefined)
 
-export const AppointmentCalenderProvider: FC<AppointmentCalenderProviderProps> = ({ children, dates, formats, stylesConfigs, durationStep }) => {
+export const AppointmentCalenderProvider: FC<AppointmentCalenderProviderProps> = ({ children, dates, formats, stylesConfigs, durationStep, minDuration, maxDuration }) => {
   const [calenderDates, setCalenderDates] = useState<IDate[]>(dates || getDatesByNumber(2, 'month'))
   const [values, __setValues] = useState<Selected>({
     datetime: calenderDates[0].date,
@@ -125,6 +129,8 @@ export const AppointmentCalenderProvider: FC<AppointmentCalenderProviderProps> =
         setDate,
         setDatesList,
         setDuration,
+        minDuration: minDuration || MIN_DURATION,
+        maxDuration: maxDuration || MAX_DURATION,
         addTime,
         subtractTime,
         increaseDuration,
