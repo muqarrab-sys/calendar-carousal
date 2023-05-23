@@ -7,6 +7,6 @@ import { CalendarCarousel, getDates } from '../../src'
 
 describe('Carousel', () => {
   it('Renders', () => {
-    render(<CalendarCarousel data={getDates()} />)
+    render(<CalendarCarousel dates={getDates()} />)
   })
 })

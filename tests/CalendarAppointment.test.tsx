@@ -17,7 +17,7 @@ describe('App', () => {
   it('renders with custom data', () => {
     render(
       <AppointmentCalenderProvider>
-        <CalendarAppointment data={getDatesByNumber(10, 'day')} />
+        <CalendarAppointment dates={getDatesByNumber(10, 'day')} />
       </AppointmentCalenderProvider>,
     )
   })
