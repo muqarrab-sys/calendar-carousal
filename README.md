@@ -131,16 +131,21 @@ This is the main component and can be used as is with `useAppointment`, or can b
 | cardsPerView            | number or BreakPoint                        | Number of cards shown per view in carousel           | 3       |
 | cardWidth               | number                                      | Width of the `CalenderCard`                          | 170     |
 | durationStep            | number                                      | Amount by which duration should increase or decrease | 30      |
+| minDuration             | number                                      | Minimum time the duration can be                     | 30      |
+| maxDuration             | number                                      | Maximum time the duration can be                     | 120     |
 | onChange                | ({dateTime, duration}) => void              | callback each time any value is changed              | -       |
 | containerStyle          | CSSProperties                               | Component container styles object                    | -       |
 | collapseContainerStyle  | CSSProperties                               | Collapse container styles object                     | -       |
 | durationContainerStyles | CSSProperties                               | Duration panel container styles object               | -       |
 | durationContainerStyles | CSSProperties                               | Duration panel container styles object               | -       |
 | cardStyles              | {head?: CSSProperties, body: CSSProperties} | CalenderCard component styles object                 | -       |
+| calenderComponent       | ReactElement                                | Custom component for calender panel                  | -       |
+| timeComponent           | ReactElement                                | Custom component for time panel                      | -       |
+| durationComponent       | ReactElement                                | Custom component for duration panel                  | -       |
 
 ### `CalendarCarousel`
 
-This is carousel component used in `CalendarAppointment` component.
+This is the default calender component used in `CalendarAppointment`.
 
 | Prop           | Type                                        | Description                                                  | Default    |
 | -------------- | ------------------------------------------- | ------------------------------------------------------------ | ---------- |
@@ -154,7 +159,7 @@ This is carousel component used in `CalendarAppointment` component.
 
 ### `CalenderCard`
 
-This is calender card component used in `CalendarCarousel` component. Internally antd's `Card` component is used.
+This is the default calender card component used in `CalendarCarousel` component.
 
 | Prop      | Type                    | Description                                      | Default |
 | --------- | ----------------------- | ------------------------------------------------ | ------- |
@@ -180,6 +185,8 @@ This contains all the configs and state of the appointment calender.
 | stylesConfig     | Object                               | Provided style configs                                             |
 | values           | SelectedValues                       | Object containing currently selected values                        |
 | durationStep     | number                               | Amount by which duration should increase or decrease               |
+| minDuration      | number                               | Minimum time the duration can be                                   |
+| maxDuration      | number                               | Maximum time the duration can be                                   |
 | setDate          | (Dayjs): void                        | Manually set the current selected date                             |
 | setDuration      | (number): void                       | Manually set the current selected duration                         |
 | setDatesList     | (IDate): void                        | Manually set the list of dates                                     |
